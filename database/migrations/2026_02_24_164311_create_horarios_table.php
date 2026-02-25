@@ -18,7 +18,7 @@ return new class extends Migration
 
             // Tramo de disponibilidad (ej: 09:00 - 14:00)
             $table->time('hora_inicio');
-            $table->time('hora:fin');
+            $table->time('hora_fin');
 
             $table->boolean('activo')->default(true); // Permite desactivar tramos sin borrarlos
             $table->timestamps();

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('importe', 10, 2);
 
             // Estado del pago
-            $table->enium('estado', ['pendiente', 'pagado'])->default('pendiente');
+            $table->enum('estado', ['pendiente', 'pagado'])->default('pendiente');
 
             // Fecha/hora real del pago
             $table->dateTime('fecha_pago')->nullable();

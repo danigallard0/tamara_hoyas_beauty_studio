@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
 
             // Cita asociada
-            $table->foreingId('cita_id')
+            $table->foreignId('cita_id')
                 ->constrained('citas')
                 ->cascadeOnDelete();
             
             // Servicio asociado
-            $table->foreingId('servicio_id')
+            $table->foreignId('servicio_id')
                 ->constrained('servicios')
                 ->restrictOnDelete();
 

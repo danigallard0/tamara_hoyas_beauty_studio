@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
              //una cita emite como máximo una factura
-             $table->foreingId('cita_id')
+             $table->foreignId('cita_id')
                 ->constrined('citas')
                 ->cascadeOnDelete();
             

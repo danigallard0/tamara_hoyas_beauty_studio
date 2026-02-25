@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
 
             // Usuario que realiza la reserva (cliente)
-            $table->foreingId('user_id')
+            $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
             
                 // Horario base (tramo de disponibilidad) donde cae la cita
             // Usamos restrictOnDelete para evitar borrar un horario si tiene citas asociadas
-            $table->foreingId('horario_id')
+            $table->foreignId('horario_id')
                 ->constrained('horarios')
                 ->restrictOnDelete();
             
