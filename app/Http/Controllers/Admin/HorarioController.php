@@ -35,8 +35,8 @@ class HorarioController extends Controller
     {
         $data = $request->validate([
             'dia_semana' => 'required|integer|min:0|max:6',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
         ]);
 
         $data['activo'] = $request->has('activo');
@@ -63,8 +63,8 @@ class HorarioController extends Controller
     {
         $data = $request->validate([
             'dia_semana' => 'required|integer|min:0|max:6',
-            'hora_inicio' => 'required',
-            'hora_fin' => 'required',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required!date_format:H:i!after:hora_inicio',
         ]);
 
         $data['activo'] = $request->has('activo');

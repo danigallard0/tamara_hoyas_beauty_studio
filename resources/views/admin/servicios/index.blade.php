@@ -14,7 +14,7 @@
 
   <div class="p-6 space-y-4">
     @if(session('success'))
-      <div class="p-3 rounded bg-green-100">
+      <div class="mb-4 p-3 bg-green-100 text-grenn-800 rounded">
         {{ session('success') }}
       </div>
     @endif 

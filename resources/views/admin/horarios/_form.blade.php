@@ -13,6 +13,9 @@
       <option value="6" @selected($dia==6)>Sábado</option>
       <option value="0" @selected($dia==0)>Domingo</option>
     </select>
+    @error('dia_semana')
+      <p class="text-red-600 text-sm">{{ $message }}</p>
+    @enderror
   </div>
 
   <div>
@@ -22,6 +25,9 @@
            class="w-full border rounded p-2"
            value="{{ old('hora_inicio', $horario->hora_inicio) }}"
            required>
+     @error('hora_inicio')
+      <p class="text-red-600 text-sm">{{ $message }}</p>
+     @enderror  
   </div>
 
   <div>
@@ -31,6 +37,9 @@
            class="w-full border rounded p-2"
            value="{{ old('hora_fin', $horario->hora_fin) }}"
            required>
+     @error('hora_fin')
+      <p class="text-red-600 text-sm">{{ $message }}</p>
+     @enderror
   </div>
 
   <div class="flex items-center gap-2">

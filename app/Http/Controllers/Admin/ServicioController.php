@@ -38,13 +38,14 @@ class ServicioController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $this->validateData($request);
+        $data = $this->validatedData($request);
 
         $data['activo'] = $request->has('activo');
 
         Servicio::create($data);
 
-        return redirect()->route('admin.servicios.index')
+        return redirect()
+            ->route('admin.servicios.index')
             ->with('success', 'Servicio creado correctamente.');
     }
 
