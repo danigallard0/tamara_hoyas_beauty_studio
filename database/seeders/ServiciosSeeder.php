@@ -14,7 +14,7 @@ class ServiciosSeeder extends Seeder
     public function run(): void
     {
         // Servicios base del centro (catálogo inicial)
-        DB::table('servicios')->insert([
+        $servicios =[
             [
                 'nombre' => 'Micropigmentación de cejas',
                 'descripcion' => 'Diseño y pigmentación permanente de cejas.',
@@ -65,6 +65,15 @@ class ServiciosSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
+        ];
+
+        foreach ($servicios as $s) {
+            DB::table('servicios')->updateOrInsert(
+                ['nombre' => $s['nombre']],
+                array_merge($s, ['updated_at' => now(), 'created_at' => now()])  
+            );
+        }
+
+
     }
 }

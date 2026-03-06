@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ServicioController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,8 +18,17 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'admin'])->get('/admin', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        //Dashboard admin
+        Route::get('/', function() {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        //CRUD Servicios
+        Route::resource('servicios', ServicioController::class);
+    });
 
 require __DIR__.'/auth.php';
