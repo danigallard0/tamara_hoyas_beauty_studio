@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ServicioController;
+use App\Http\Controllers\Admin\HorarioController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'admin'])
 
         //CRUD Servicios
         Route::resource('servicios', ServicioController::class);
+
+        //CRUD Horarios
+        Route::resource('horarios', HorarioController::class);
     });
 
 require __DIR__.'/auth.php';

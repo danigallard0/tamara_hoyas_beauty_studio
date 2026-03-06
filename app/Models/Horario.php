@@ -6,5 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Horario extends Model
 {
-    //
+    protected $fillable = [
+        'dia_semana',
+        'hora_inicio',
+        'hora_fin',
+        'activo',
+    ];
+
+    protected $casts = [
+        'activo' => 'boolean',
+    ];
 }
