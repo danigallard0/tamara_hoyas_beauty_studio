@@ -30,7 +30,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique('cita_id', 'sercicio_id');
+            $table->unique('cita_id', 'servicio_id');
         });
     }
 

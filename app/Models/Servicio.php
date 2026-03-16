@@ -21,4 +21,13 @@ class Servicio extends Model
         'precio' => 'decimal:2',
         'duracion_min' => 'integer',
     ];
+
+    //Un servicio puede aparecer en muchas citas.
+
+    public function citas()
+    {
+        return $this->belongsToMany(Cita::class, 'cita_servicio')
+        ->withPivot('precio_aplicado')
+        ->withTimestamps();
+    }
 }

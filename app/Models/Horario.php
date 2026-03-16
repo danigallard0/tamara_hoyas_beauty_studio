@@ -16,4 +16,10 @@ class Horario extends Model
     protected $casts = [
         'activo' => 'boolean',
     ];
+
+    //Un horario puede estar asociado a muchas citas
+    public function citas()
+    {
+        return $this->hasMany(Cita::class);
+    }
 }
