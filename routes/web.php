@@ -39,6 +39,8 @@ Route::middleware(['auth', 'admin'])
 Route::middleware(['auth'])->prefix('cliente')->name('cliente.')->group(function () {
     Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
     Route::post('/citas', [CitaController::class, 'store'])->name('citas.store'); 
+    Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
+    Route::delete('/citas/{cita}', [CitaController::class, 'destroy'])->name('citas.destroy');
 });
 
 

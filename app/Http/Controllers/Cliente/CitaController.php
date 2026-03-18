@@ -70,4 +70,31 @@ class CitaController extends Controller
             ->route('cliente.citas.create')
             ->with('success', 'Cita creada correctamente. Más adelante se confirmará con el pago del anticipo.');
     }
+
+    //Mostrar las citas del cliente autenticado
+    public function index()
+    {
+        $citas = Cita::with('servicios')
+            ->where('user_id', auth()->id())
+            ->orderBy('fecha_cita', 'desc')
+            ->orderBy('hora_inicio', 'desc')
+            ->get();
+
+        return view('cliente.citas.index', compact('citas'));
+    }
+
+    //Cancelar una cita del cliente
+    public function destroy(Cita $cita)
+    {
+        //Impedir cancelar cita de otro usuario
+        if ($cita->user_id !== auth()->id()){
+            abort(403);
+        }
+
+        $cita->update(['estado' => 'cancelada']);
+
+        return redirect()
+            ->route('cliente.citas.index')
+            ->with('success', 'Cita cancelada correctamente.');
+    }
 }
