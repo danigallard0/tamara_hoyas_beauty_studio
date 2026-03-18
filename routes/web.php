@@ -41,6 +41,7 @@ Route::middleware(['auth'])->prefix('cliente')->name('cliente.')->group(function
     Route::post('/citas', [CitaController::class, 'store'])->name('citas.store'); 
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::delete('/citas/{cita}', [CitaController::class, 'destroy'])->name('citas.destroy');
+    Route::get('/citas/horas-disponibles', [CitaController::class, 'horasDisponibles'])->name('citas.horas-disponibles');
 });
 
 

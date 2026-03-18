@@ -20,37 +20,106 @@ class CitaController extends Controller
         ->orderBy('nombre')
         ->get();
 
-        //Solo mostramos horarios activos, ordenados por día y hora
-        $horarios = Horario::where('activo', true)
-        ->orderBy('dia_semana')
-        ->orderBy('hora_inicio')
-        ->get();
 
-        return view('cliente.citas.create', compact('servicios', 'horarios'));
+        return view('cliente.citas.create', compact('servicios'));
+    }
+
+    //Horas disponibles para poder reservar un servicio
+    public function horasDisponibles(Request $request)
+    {
+        $data = $request->validate([
+            'servicio_id' => ['required', 'exists:servicios,id'],
+            'fecha_cita' => ['required', 'date'],
+        ]);
+
+        $servicio = Servicio::findOrFail($data['servicio_id']);
+        $fecha = Carbon::parse($data['fecha_cita']);
+        $diaSemana = $fecha->dayOfWeekIso; // 1=Lunes ... 7=Domingo
+
+        $horarios = Horario::where('activo', true)
+            ->where('dia_semana', $diaSemana)
+            ->orderBy('hora_inicio')
+            ->get();
+
+        $citasExistentes = Cita::where('fecha_cita', $data['fecha_cita'])
+            ->where('estado', '!=', 'cancelada')
+            ->get();
+
+        $horasDisponibles = [];
+
+        foreach ($horarios as $horario) {
+            $inicioBloque = Carbon::createFromFormat('H:i:s', $horario->hora_inicio);
+            $finBloque = Carbon::createFromFormat('H:i:s', $horario->hora_fin);
+
+            $slotInicio = $inicioBloque->copy();
+
+            while ($slotInicio->copy()->addMinutes($servicio->duracion_min)->lte($finBloque)) {
+                $slotFin = $slotInicio->copy()->addMinutes($servicio->duracion_min);
+
+                $solapa = $citasExistentes->contains(function ($cita) use ($slotInicio, $slotFin) {
+                $citaInicio = Carbon::createFromFormat('H:i:s', $cita->hora_inicio);
+                $citaFin = Carbon::createFromFormat('H:i:s', $cita->hora_fin);
+
+                    return $citaInicio < $slotFin && $citaFin > $slotInicio;
+                });
+
+                if (! $solapa) {
+                    $horasDisponibles[] = [
+                        'value' => $slotInicio->format('H:i:s'),
+                        'label' => $slotInicio->format('H:i') . ' - ' . $slotFin->format('H:i'),
+                    ];
+                }
+
+                $slotInicio->addMinutes(30);
+             }
+         }
+
+         return response()->json($horasDisponibles);
     }
 
     //Guardar una nueva cita creada por el cliente
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        //Validación básica del formulario
         $data = $request->validate([
             'servicio_id' => ['required', 'exists:servicios,id'],
-            'horario_id' => ['required', 'exists:horarios,id'],
             'fecha_cita' => ['required', 'date'],
+            'hora_inicio' => ['required', 'date_format:H:i:s'],
             'mensaje_cliente' => ['nullable', 'string'],
         ]);
 
-        //Buscamos el servicio y el horario seleccionados
         $servicio = Servicio::findOrFail($data['servicio_id']);
-        $horario = Horario::findOrFail($data['horario_id']);
+        $fecha = Carbon::parse($data['fecha_cita']);
+        $diaSemana = $fecha->dayOfWeekIso;
 
-        //La hora de inicio de la cita será la hora de inicio del horario elegido
-        $horaInicio = Carbon::createFromFormat('H:i:s', $horario->hora_inicio);
-
-        //Calculamos la hora fin sumando la duración del servicio
+        $horaInicio = Carbon::createFromFormat('H:i:s', $data['hora_inicio']);
         $horaFin = $horaInicio->copy()->addMinutes($servicio->duracion_min);
 
-        //Creamos la cita con estado pendiente
+        $horario = Horario::where('activo', true)
+            ->where('dia_semana', $diaSemana)
+            ->where('hora_inicio', '<=', $horaInicio->format('H:i:s'))
+            ->where('hora_fin', '>=', $horaFin->format('H:i:s'))
+            ->first();
+
+        if (! $horario) {
+            return back()
+                ->withErrors(['hora_inicio' => 'La hora seleccionada no encaja en ningún horario disponible.'])
+                ->withInput();
+        }
+
+        $existeSolape = Cita::where('fecha_cita', $data['fecha_cita'])
+            ->where('estado', '!=', 'cancelada')
+            ->where(function ($query) use ($horaInicio, $horaFin) {
+                $query->where('hora_inicio', '<', $horaFin->format('H:i:s'))
+                    ->where('hora_fin', '>', $horaInicio->format('H:i:s'));
+             })
+            ->exists();
+
+        if ($existeSolape) {
+            return back()
+                ->withErrors(['hora_inicio' => 'Ya existe una cita en ese horario.'])
+                ->withInput();
+        }
+
         $cita = Cita::create([
             'user_id' => auth()->id(),
             'horario_id' => $horario->id,
@@ -61,14 +130,13 @@ class CitaController extends Controller
             'mensaje_cliente' => $data['mensaje_cliente'] ?? null,
         ]);
 
-        //Asociamos el servicio a a cita en la tabla intemedia
         $cita->servicios()->attach($servicio->id, [
             'precio_aplicado' => $servicio->precio,
         ]);
 
         return redirect()
-            ->route('cliente.citas.create')
-            ->with('success', 'Cita creada correctamente. Más adelante se confirmará con el pago del anticipo.');
+            ->route('cliente.citas.index')
+            ->with('success', 'Cita creada correctamente.');
     }
 
     //Mostrar las citas del cliente autenticado

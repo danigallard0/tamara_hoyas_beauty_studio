@@ -15,7 +15,7 @@ class Servicio extends Model
         'precio',
         'activo',
     ];
-    //Para que Laraveltrate los tipos bien
+    //Para que Laravel trate los tipos bien
     protected $casts = [
         'activo' => 'boolean',
         'precio' => 'decimal:2',
