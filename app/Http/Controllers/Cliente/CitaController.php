@@ -37,7 +37,7 @@ class CitaController extends Controller
             'servicio_id' => ['required', 'exists:servicios,id'],
             'horario_id' => ['required', 'exists:horarios,id'],
             'fecha_cita' => ['required', 'date'],
-            'mensaje_cliente' => ['nullable', string],
+            'mensaje_cliente' => ['nullable', 'string'],
         ]);
 
         //Buscamos el servicio y el horario seleccionados
