@@ -34,14 +34,15 @@
 
                     <div>
                         <label class="block font-medium mb-1">Fecha</label>
-                        <input
-                            type="date"
-                            name="fecha_cita"
-                            id="fecha_cita"
-                            value="{{ old('fecha_cita') }}"
-                            class="w-full border rounded p-2"
-                            required
-                        >
+                        <div>
+                            <label class="block font-medium mb-1">Selecciona un día</label>
+
+                            <!-- Calendario -->
+                            <div id="calendar" class="bg-white rounded shadow p-4"></div>
+
+                            <!-- Campo oculto -->
+                            <input type="hidden" name="fecha_cita" id="fecha_cita">
+                        </div>
                         @error('fecha_cita')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -136,5 +137,48 @@
 
         servicioSelect.addEventListener('change', cargarHorasDisponibles);
         fechaInput.addEventListener('change', cargarHorasDisponibles);
+    </script>
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Seleccionamos el contenedor
+        const calendarEl = document.getElementById('calendar');
+
+        // Seleccionamos el input oculto
+        const fechaInput = document.getElementById('fecha_cita');
+
+        // Creamos el calendario
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+
+            initialView: 'dayGridMonth',
+            locale: 'es',
+
+            // Cuando haces click en un día
+            dateClick: function(info) {
+
+                // Guardamos la fecha seleccionada
+                fechaInput.value = info.dateStr;
+
+                // Disparamos el evento para cargar horas
+                fechaInput.dispatchEvent(new Event('change'));
+
+                // Resaltamos el día seleccionado
+                document.querySelectorAll('.fc-daygrid-day').forEach(el => {
+                    el.classList.remove('bg-blue-100');
+                });
+
+                info.dayEl.classList.add('bg-blue-100');
+            }
+        });
+
+        calendar.render();
+    });
     </script>
 </x-app-layout>
