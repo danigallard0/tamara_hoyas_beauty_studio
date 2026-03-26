@@ -165,4 +165,36 @@ class CitaController extends Controller
             ->route('cliente.citas.index')
             ->with('success', 'Cita cancelada correctamente.');
     }
+
+    //Modificar una cita por el administrador
+    public function update(Request $request, Cita $cita)
+{
+    $data = $request->validate([
+        'servicio_id' => ['required', 'exists:servicios,id'],
+        'fecha_cita' => ['required', 'date'],
+        'hora_inicio' => ['required'],
+        'hora_fin' => ['required'],
+        'estado' => ['required'],
+        'mensaje_cliente' => ['nullable', 'string'],
+    ]);
+
+    // Actualizamos datos principales
+    $cita->update([
+        'fecha_cita' => $data['fecha_cita'],
+        'hora_inicio' => $data['hora_inicio'],
+        'hora_fin' => $data['hora_fin'],
+        'estado' => $data['estado'],
+        'mensaje_cliente' => $data['mensaje_cliente'],
+    ]);
+
+    // Actualizamos servicio
+    $cita->servicios()->sync([
+        $data['servicio_id'] => [
+            'precio_aplicado' => $cita->servicios->first()->pivot->precio_aplicado ?? 0
+        ]
+    ]);
+
+    return redirect()->route('admin.calendario.index')
+        ->with('success', 'Cita actualizada correctamente');
+}
 }

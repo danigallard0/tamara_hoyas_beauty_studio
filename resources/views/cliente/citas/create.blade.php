@@ -37,11 +37,20 @@
                         <div>
                             <label class="block font-medium mb-1">Selecciona un día</label>
 
-                            <!-- Calendario -->
+                            <!-- Calendario visual -->
                             <div id="calendar" class="bg-white rounded shadow p-4"></div>
 
-                            <!-- Campo oculto -->
+                            <!-- Texto informativo con el día seleccionado -->
+                            <p id="fecha_seleccionada_texto" class="mt-2 text-sm text-gray-600">
+                                No has seleccionado ningún día.
+                            </p>
+
+                            <!-- Campo oculto que se envía al backend -->
                             <input type="hidden" name="fecha_cita" id="fecha_cita">
+
+                            @error('fecha_cita')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         @error('fecha_cita')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -82,7 +91,13 @@
                             href="{{ route('cliente.citas.index') }}"
                             class="px-4 py-2 border rounded"
                         >
-                            Cancelar
+                            Ver mis citas
+                        </a>
+                        <a
+                            href="{{ route('cliente.dashboard') }}"
+                            class="px-4 py-2 border rounded"
+                        >
+                            Volver a la pantalla principal
                         </a>
                     </div>
                 </div>
@@ -154,11 +169,21 @@
         // Seleccionamos el input oculto
         const fechaInput = document.getElementById('fecha_cita');
 
+        //Texto que muestra a usuario el día seleccionado
+        const fechaTexto = document.getElementById('fecha_seleccionad_texto');
+
         // Creamos el calendario
         const calendar = new FullCalendar.Calendar(calendarEl, {
 
             initialView: 'dayGridMonth',
             locale: 'es',
+
+            firstDay: 1,
+
+            //Bloqueamos días anteriores a hoy
+            validRange: {
+                start: new Date().toISOString().split('T')[0]
+            },
 
             // Cuando haces click en un día
             dateClick: function(info) {
@@ -171,13 +196,24 @@
 
                 // Resaltamos el día seleccionado
                 document.querySelectorAll('.fc-daygrid-day').forEach(el => {
-                    el.classList.remove('bg-blue-100');
+                    el.classList.remove('bg-blue-100', 'ring', 'ring-blue-400');
                 });
 
-                info.dayEl.classList.add('bg-blue-100');
+                info.dayEl.classList.add('bg-blue-100', 'ring', 'ring-blue-400');
+
+                //Mostramos la fecha seleccionada
+                const fechaBonita = new Date(info.dateStr).toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                fechaTexto.textContent = 'Día seleccionado: ' + fechaBonita;
             }
         });
 
+        //Pintamos el calendario
         calendar.render();
     });
     </script>

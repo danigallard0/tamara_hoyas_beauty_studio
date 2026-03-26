@@ -4,6 +4,12 @@
             Mis citas
         </h2>
     </x-slot>
+    <div class="mb-4">
+        <a href="{{ route('cliente.dashboard') }}"
+          class="inline-block px-4 py-2 border rounded hover:bg-gray-50">
+          ← Volver al panel cliente
+        </a>
+    </div>
 
     <div class="p-6 max-w-5xl">
         @if(session('success'))

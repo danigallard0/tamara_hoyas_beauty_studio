@@ -12,6 +12,13 @@
     </div>
   </x-slot>
 
+  <div class="mb-4">
+      <a href="{{ route('admin.dashboard') }}"
+         class="inline-block px-4 py-2 border rounded hover:bg-gray-50">
+          ← Volver al panel de administración
+      </a>
+  </div>
+
   <div class="p-6 space-y-4">
     @if(session('success'))
       <div class="mb-4 p-3 bg-green-100 text-grenn-800 rounded">

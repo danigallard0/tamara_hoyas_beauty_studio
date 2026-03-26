@@ -3,6 +3,13 @@
     <h2 class="font-semibold text-xl">Horarios</h2>
   </x-slot>
 
+  <div class="mb-4">
+      <a href="{{ route('admin.dashboard') }}"
+         class="inline-block px-4 py-2 border rounded hover:bg-gray-50">
+          ← Volver al panel de administración
+      </a>
+  </div>
+
   <div class="p-6">
     <a href="{{ route('admin.horarios.create') }}" class="mb-4 inline-block px-4 py-2 bg-blue-600 text-white rounded">Nuevo horario</a>
 
@@ -26,9 +33,9 @@
       <tbody>
         @foreach($horarios as $horario)
           <tr class="border-t">
-            <td class="p-2">{{ $horario->dia_semana }}</td>
-            <td class="p-2">{{ $horario->hora_inicio }}</td>
-            <td class="p-2">{{ $horario->hora_fin }}</td>
+            <td class="p-2">{{ ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'][$horario->dia_semana] }}</td>
+            <td class="p-2">{{ \Carbon\Carbon::createFromFormat('H:i:s', $horario->hora_inicio)->format('H:i') }}</td>
+            <td class="p-2">{{ \Carbon\Carbon::createFromFormat('H:i:s', $horario->hora_fin)->format('H:i') }}</td>
             <td class="p-2">{{ $horario->activo ? 'Sí' : 'No' }}</td>
 
             <td class="p-2 flex gap-2">

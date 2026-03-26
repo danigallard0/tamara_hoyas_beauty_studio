@@ -11,7 +11,15 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = auth()->user();
+
+    //Si el usuario es admin lo llevamos al panel de admin
+    if($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
+    //Si no es admin, lo tratamos como cliente
+    return redirect()->route('cliente.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -34,9 +42,25 @@ Route::middleware(['auth', 'admin'])
 
         //CRUD Horarios
         Route::resource('horarios', HorarioController::class);
+
+        //Mostrar FullCalendar
+        Route::get('/calendario', [App\Http\Controllers\Admin\CalendarioController::class, 'index'])
+            ->name('calendario.index');
+        Route::get('/calendario/eventos', [App\Http\Controllers\Admin\CalendarioController::class, 'eventos'])
+            ->name('calendario.eventos');
+        
+        //Editar citas desde el calendario
+        Route::get('/citas/{cita}/edit', [App\Http\Controllers\Admin\CitaController::class, 'edit'])
+            ->name('citas.edit');
+        Route::put('/citas/{cita}', [App\Http\Controllers\Admin\CitaController::class, 'update'])
+            ->name('citas.update');
 });
 
 Route::middleware(['auth'])->prefix('cliente')->name('cliente.')->group(function () {
+    Route::get('/', function() {
+        return view('cliente.dashboard');
+    })->name('dashboard');
+
     Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
     Route::post('/citas', [CitaController::class, 'store'])->name('citas.store'); 
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
