@@ -83,11 +83,21 @@ class CitaController extends Controller
         $data = $request->validate([
             'servicio_id' => ['required', 'exists:servicios,id'],
             'fecha_cita' => ['required', 'date'],
-            'hora_inicio' => ['required', 'date_format:H:i:s'],
+            'hora_inicio' => ['required'],
             'mensaje_cliente' => ['nullable', 'string'],
         ]);
 
         $servicio = Servicio::findOrFail($data['servicio_id']);
+
+        //Si el servicio es maquillaje -> mensaje obligatorio
+        if ($servicio->tipo_servicio === 'maquillaje' && empty($data['mensaje_cliente'])) {
+            return back()
+                ->withErrors([
+                    'mensaje_cliente' => 'Debes indicar observaciones para servicios de maquillaje.'
+                ])
+                ->withInput();
+        }
+        
         $fecha = Carbon::parse($data['fecha_cita']);
         $diaSemana = $fecha->dayOfWeekIso;
 

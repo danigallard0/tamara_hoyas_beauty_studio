@@ -74,6 +74,9 @@
                             rows="4"
                             class="w-full border rounded p-2"
                         >{{ old('mensaje_cliente') }}</textarea>
+                        <p id="aviso_maquillaje" class="text-sm text-yellow-600 mt-1 hidden">
+                            ⚠️ Las observaciones son obligatorias para servicios de maquillaje.
+                        </p>
                         @error('mensaje_cliente')
                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -170,7 +173,7 @@
         const fechaInput = document.getElementById('fecha_cita');
 
         //Texto que muestra a usuario el día seleccionado
-        const fechaTexto = document.getElementById('fecha_seleccionad_texto');
+        const fechaTexto = document.getElementById('fecha_seleccionada_texto');
 
         // Creamos el calendario
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -211,6 +214,7 @@
 
                 fechaTexto.textContent = 'Día seleccionado: ' + fechaBonita;
             }
+
         });
 
         //Pintamos el calendario
