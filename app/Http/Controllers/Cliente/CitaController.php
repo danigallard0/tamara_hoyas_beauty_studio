@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Cita;
 use App\Models\Horario;
 use App\Models\Servicio;
+use App\Models\Factura;
+use App\Models\Pago;
 use Carbon\Carbon;
 
 
@@ -144,9 +146,26 @@ class CitaController extends Controller
             'precio_aplicado' => $servicio->precio,
         ]);
 
+        //Creamos automáticamente la factura asociada a la cita
+        $baseImponible = $servicio->precio;
+        $ivaPorcentaje = 21.00;
+        $ivaImporte = round($baseImponible * $ivaPorcentaje / 100, 2);
+        $total = round($baseImponible + $ivaImporte, 2);
+
+        $factura = Factura::create([
+            'cita_id' => $cita->id,
+            'numero_factura' => 'FAC-' . now()->format('Ymd-His') . '-' . $cita->id,
+            'fecha_emision' => $cita->fecha_cita,
+            'estado_factura' => 'emitida',
+            'base_imponible' => $baseImponible,
+            'iva_porcentaje' => $ivaPorcentaje,
+            'iva_importe' => $ivaImporte,
+            'total' => $total,
+        ]);
+
         return redirect()
-            ->route('cliente.citas.index')
-            ->with('success', 'Cita creada correctamente.');
+            ->route('cliente.citas.pago', $cita)
+            ->with('success', 'Cita creada. Para confirmar la reserva debes pagar el 20% del servicio.');
     }
 
     //Mostrar las citas del cliente autenticado
@@ -207,4 +226,70 @@ class CitaController extends Controller
     return redirect()->route('admin.calendario.index')
         ->with('success', 'Cita actualizada correctamente');
 }
+
+    //Muestra la pantalla de pago simulado del 20% para confirmar la cita.
+    public function pago(Cita $cita)
+    {
+        //Seguridad: solo el duelo de la cita puede pagarla
+        if ($cita->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        //Cargamos la factura y servicios por comodidad
+        $cita->load('factura', 'servicios');
+
+        if(! $cita->factura){
+            return redirect()
+                ->route('cliente.citas.index')
+                ->with('error', 'La cita no tiene factura asociada.');
+        }
+
+        //Anticipo del 20% sobre la base imponible
+        $anticipo = round($cita->factura->base_imponible * 0.20, 2);
+
+        return view('cliente.citas.pago', compact('cita', 'anticipo'));
+    }
+
+    //Procesa el pago simulado del 20% de la cita.
+    public function procesarPago(Request $request, Cita $cita)
+    {
+        //Seguridad: solo el dueño de la cita puede pagarla
+        if($cita->user_id !== auth()->id()){
+            abort(403);
+        }
+
+        $cita->load('factura');
+
+        if(! $cita->factura){
+            return redirect()
+                ->route('cliente.citas.index')
+                ->with('error', 'La cita no tiene factura asociada.');
+        }
+
+        $data = $request->validate([
+            'metodo' => ['required', 'in:efectivo,tarjeta,bizum,transferencia'],
+        ]);
+
+        //Calculamos el anticipo del 20%
+        $anticipo = round($cita->factura->base_imponible * 0.20, 2);
+
+        //Registramos el pago simulado
+        Pago::create([
+            'factura_id' => $cita->factura->id,
+            'metodfo' => $data['metodo'],
+            'importe' => $anticipo,
+            'estado' => 'pagado',
+            'fecha_pago' => now(),
+            'refefrencia' => 'SIM-' . now()->format('YmdHis') . '-' . $cita->id,
+        ]);
+
+        //Marcamos la cita como confirmada tras el pago del anticipo
+        $cita->update([
+            'estado' => 'confirmada',
+        ]);
+
+        return redirect()
+            ->route('cliente.citas.index')
+            ->with('success', 'Pago sumulado realizado correctamente. La cita ha quedado confirmada.');
+    }
 }

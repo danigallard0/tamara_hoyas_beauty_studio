@@ -18,7 +18,7 @@ class CalendarioController extends Controller
     public function eventos(Request $request)
     {
         //Empezamos la consulta cargando usuario y servicios
-        $query = Cita::with(['user', 'servicios']);
+        $query = Cita::with(['user', 'servicios', 'factura.pagos']);
 
         //Filtrar por estado si viene informado
         if ($request->filled('estado')) {
@@ -37,7 +37,8 @@ class CalendarioController extends Controller
         $eventos = $citas->map(function($cita) {
             $nombreCliente = $cita->user?->name ?? 'Cliente';
             $servicios = $cita->servicios->pluck('nombre')->join(', ');
-            $titulo = $nombreCliente . ' - ' . $servicios;
+            $estadoCobro = $cita->factura ? $cita->factura->estado_cobro : 'pendiente';
+             $titulo = $nombreCliente . ' - ' . $servicios . ' [' . strtoupper($estadoCobro) . ']';
 
             return [
                 'id' => $cita->id,
@@ -54,10 +55,10 @@ class CalendarioController extends Controller
                  'allday' => false,
 
                  //Color según estado
-                 'color' => match ($cita->estado) {
+                 'color' => match ($estadoCobro) {
                     'pendiente' => '#f59e0b',
-                    'confirmada' => '#10b981',
-                    'cancelada' => '#ef4444',
+                    'parcial' => '#f97316',
+                    'pagado' => '#10b981',
                     default => '#3b82f6',
                  },
 
@@ -65,6 +66,7 @@ class CalendarioController extends Controller
                  'extendedProps' => [
                     'estado' => $cita->estado,
                     'mensaje_cliente' => $cita->mensaje_cliente,
+                    'estado_cobro' => $estadoCobro,
                  ],
 
             ];

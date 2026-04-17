@@ -16,7 +16,7 @@ return new class extends Migration
 
              //una cita emite como máximo una factura
              $table->foreignId('cita_id')
-                ->constrined('citas')
+                ->constrained('citas')
                 ->cascadeOnDelete();
             
             // UNIQUE para forzar 1 factura por cita

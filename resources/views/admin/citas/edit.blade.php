@@ -85,6 +85,32 @@
 
             </form>
 
+            @if($cita->factura)
+                <div class="mt-4 p-3 bg-gray-50 rounded border">
+                    <p><strong>Estado de cobro:</strong> {{ ucfirst($cita->factura->estado_cobro) }}</p>
+                    <p><strong>Total pagado:</strong> {{ number_format($cita->factura->total_pagado, 2) }} €</p>
+                    <p><strong>Pendiente:</strong> {{ number_format($cita->factura->total - $cita->factura->total_pagado, 2) }} €</p>
+                </div>
+            @endif
+
+            @if(!$cita->factura)
+                <form method='POST' action="{{ route('admin.facturas.store', $cita) }}" class="mt-4">
+                    @csrf 
+                    <button type="submit"
+                            onclick="return confirm('¿Deseas generar la factura de esta cita?')"
+                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        Generar factura
+                    </button>
+                </form>
+            @else
+                <div class="mt-4">
+                    <a href="{{ route('admin.facturas.show', $cita->factura) }}"
+                       class="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                        Ver factura 
+                    </a>
+                </div>
+            @endif
+
         </div>
     </div>
 </x-app-layout>

@@ -35,4 +35,9 @@ class Cita extends Model
         ->withPivot('precio_aplicado')
         ->withTimestamps();
     }
+
+    public function factura()
+    {
+        return $this->hasOne(Factura::class);
+    }
 }

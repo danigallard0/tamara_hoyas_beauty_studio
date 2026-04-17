@@ -54,6 +54,20 @@ Route::middleware(['auth', 'admin'])
             ->name('citas.edit');
         Route::put('/citas/{cita}', [App\Http\Controllers\Admin\CitaController::class, 'update'])
             ->name('citas.update');
+
+        //Facturas
+        Route::post('/citas/{cita}/factura', [App\Http\Controllers\Admin\FacturaController::class, 'store'])
+            ->name('facturas.store');
+        Route::get('/facturas/{factura}', [App\Http\Controllers\Admin\FacturaController::class, 'show'])
+            ->name('facturas.show');
+        
+        //Pagos
+        Route::post('/facturas/{factura}/pagos', [App\Http\Controllers\Admin\PagoController::class, 'store'])
+            ->name('pagos.store');
+
+        //Imprimir
+        Route::get('/facturas/{factura}/imprimir', [App\Http\Controllers\Admin\FacturaController::class, 'imprimir'])
+            ->name('facturas.imprimir');
 });
 
 Route::middleware(['auth'])->prefix('cliente')->name('cliente.')->group(function () {
@@ -66,6 +80,9 @@ Route::middleware(['auth'])->prefix('cliente')->name('cliente.')->group(function
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::delete('/citas/{cita}', [CitaController::class, 'destroy'])->name('citas.destroy');
     Route::get('/citas/horas-disponibles', [CitaController::class, 'horasDisponibles'])->name('citas.horas-disponibles');
+
+    Route::get('/citas/{cita}/pago', [CitaController::class, 'pago'])->name('citas.pago');
+    Route::post('/citas/{cita}/pagar', [CitaController::class, 'procesarPago'])->name('citas.pagar');
 });
 
 
