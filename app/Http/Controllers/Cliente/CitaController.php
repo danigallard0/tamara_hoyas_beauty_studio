@@ -267,7 +267,7 @@ class CitaController extends Controller
         }
 
         $data = $request->validate([
-            'metodo' => ['required', 'in:efectivo,tarjeta,bizum,transferencia'],
+            'metodo' => ['required', 'in:tarjeta,bizum,transferencia'],
         ]);
 
         //Calculamos el anticipo del 20%
@@ -276,7 +276,7 @@ class CitaController extends Controller
         //Registramos el pago simulado
         Pago::create([
             'factura_id' => $cita->factura->id,
-            'metodfo' => $data['metodo'],
+            'metodo' => $data['metodo'],
             'importe' => $anticipo,
             'estado' => 'pagado',
             'fecha_pago' => now(),
@@ -290,6 +290,74 @@ class CitaController extends Controller
 
         return redirect()
             ->route('cliente.citas.index')
-            ->with('success', 'Pago sumulado realizado correctamente. La cita ha quedado confirmada.');
+            ->with('success', 'Tu reserva ha sido confirmada perfectamente.');
     }
+
+    public function fechasDisponibles(Request $request)
+    {
+        $data = $request->validate([
+            'servicio_id' => ['required', 'exists:servicios,id'],
+        ]);
+
+        $servicio = Servicio::findOrFail($data['servicio_id']);
+        $fechasDisponibles = [];
+
+        // Revisamos los próximos 30 días
+        for ($i = 0; $i < 30; $i++) {
+            $fecha = now()->addDays($i)->startOfDay();
+            $diaSemana = $fecha->dayOfWeekIso; // 1=Lunes ... 7=Domingo
+
+            $horarios = Horario::where('activo', true)
+                ->where('dia_semana', $diaSemana)
+                ->orderBy('hora_inicio')
+                ->get();
+
+            // Si no hay horario ese día, lo saltamos
+            if ($horarios->isEmpty()) {
+                continue;
+            }
+
+            $citasExistentes = Cita::whereDate('fecha_cita', $fecha->format('Y-m-d'))
+                ->where('estado', '!=', 'cancelada')
+                ->get();
+
+            $hayHueco = false;
+
+            foreach ($horarios as $horario) {
+                $inicioBloque = Carbon::createFromFormat('H:i:s', $horario->hora_inicio);
+                $finBloque = Carbon::createFromFormat('H:i:s', $horario->hora_fin);
+
+                $slotInicio = $inicioBloque->copy();
+
+                while ($slotInicio->copy()->addMinutes($servicio->duracion_min)->lte($finBloque)) {
+                    $slotFin = $slotInicio->copy()->addMinutes($servicio->duracion_min);
+
+                    $solapa = $citasExistentes->contains(function ($cita) use ($slotInicio, $slotFin) {
+                        $citaInicio = Carbon::createFromFormat('H:i:s', $cita->hora_inicio);
+                        $citaFin = Carbon::createFromFormat('H:i:s', $cita->hora_fin);
+
+                        return $citaInicio < $slotFin && $citaFin > $slotInicio;
+                    });
+
+                    if (! $solapa) {
+                        $hayHueco = true;
+                        break 2; // salimos del while y del foreach
+                    }
+
+                    $slotInicio->addMinutes(30);
+                }
+            }
+
+            if ($hayHueco) {
+                $fechasDisponibles[] = [
+                    'start' => $fecha->format('Y-m-d'),
+                    'display' => 'background',
+                    'color' => '#fce7f3',
+                ];
+            }
+        }
+
+        return response()->json($fechasDisponibles);
+    }
+    
 }

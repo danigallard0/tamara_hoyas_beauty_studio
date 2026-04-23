@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ServicioController;
 use App\Http\Controllers\Admin\HorarioController;
 use App\Http\Controllers\Cliente\CitaController;
+use App\Http\Controllers\Web\ServicioPubliController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -79,11 +80,35 @@ Route::middleware(['auth'])->prefix('cliente')->name('cliente.')->group(function
     Route::post('/citas', [CitaController::class, 'store'])->name('citas.store'); 
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::delete('/citas/{cita}', [CitaController::class, 'destroy'])->name('citas.destroy');
+    Route::get('/fechas-disponibles', [App\Http\Controllers\Cliente\CitaController::class, 'fechasDisponibles'])
+    ->name('citas.fechas-disponibles');
     Route::get('/citas/horas-disponibles', [CitaController::class, 'horasDisponibles'])->name('citas.horas-disponibles');
 
     Route::get('/citas/{cita}/pago', [CitaController::class, 'pago'])->name('citas.pago');
     Route::post('/citas/{cita}/pagar', [CitaController::class, 'procesarPago'])->name('citas.pagar');
 });
 
+Route::get('/servicios', function () {
+    return view('servicios.index');
+})->name('servicios.index');
+
+Route::get('/servicios/cejas', function () {
+    return view('servicios.cejas');
+})->name('servicios.cejas');
+
+Route::get('/servicios/ojos', function () {
+    return view('servicios.ojos');
+})->name('servicios.ojos');
+Route::get('/servicios/labios', function () {
+    return view('servicios.labios');
+})->name('servicios.labios');
+
+Route::get('/servicios/areolas', function () {
+    return view('servicios.areolas');
+})->name('servicios.areolas');
+
+Route::get('/servicios/maquillaje', function () {
+    return view('servicios.maquillaje');
+})->name('servicios.maquillaje');
 
 require __DIR__.'/auth.php';

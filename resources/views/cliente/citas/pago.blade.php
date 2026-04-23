@@ -40,7 +40,6 @@
                         <option value="tarjeta">Tarjeta</option>
                         <option value="bizum">Bizum</option>
                         <option value="transferencia">Transferencia</option>
-                        <option value="efectivo">Efectivo</option>
                     </select>
 
                     @error('metodo')

@@ -12,12 +12,7 @@
     </div>
 
     <div class="p-6 max-w-5xl">
-        @if(session('success'))
-            <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
-                {{ session('success') }}
-            </div>
-        @endif
-
+        
         <div class="bg-white shadow rounded p-6">
             @forelse($citas as $cita)
                 <div class="border-b py-4 flex justify-between items-start">

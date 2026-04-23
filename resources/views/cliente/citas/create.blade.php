@@ -1,25 +1,32 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="text-2xl font-bold text-pink-700">
             Reservar cita
         </h2>
     </x-slot>
 
-    <div class="p-6 max-w-3xl">
+    <div class="min-h-screen bg-pink-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         @if(session('success'))
             <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
                 {{ session('success') }}
             </div>
         @endif
 
-        <div class="bg-white shadow rounded p-6">
+        <div class="bg-white rounded-2xl shadow-md p-6 md:p-8">
+            <div class="mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Selecciona tu cita</h3>
+                <p class="text-gray-600">
+                    Elige el servicio, la fecha y la hora disponible para confirmar tu reserva.
+                </p>
+        </div>
             <form method="POST" action="{{ route('cliente.citas.store') }}">
                 @csrf
 
                 <div class="space-y-4">
                     <div>
-                        <label class="block font-medium mb-1">Servicio</label>
-                        <select name="servicio_id" id="servicio_id" class="w-full border rounded p-2" required>
+                        <label class="block font-medium text-gray-700 mb-1">Servicio</label>
+                        <select name="servicio_id" id="servicio_id" class="w-full border border-pink-200 rounded-lg p-2.5 focus:border-pink-500 focus:ring-pink-500" required>
                             <option value="">Selecciona un servicio</option>
                             @foreach($servicios as $servicio)
                                 <option value="{{ $servicio->id }}" @selected(old('servicio_id') == $servicio->id)>
@@ -33,12 +40,12 @@
                     </div>
 
                     <div>
-                        <label class="block font-medium mb-1">Fecha</label>
+                        <label class="block font-medium text-gray-700 mb-1">Fecha</label>
                         <div>
-                            <label class="block font-medium mb-1">Selecciona un día</label>
+                            <label class="block font-medium text-gray-700 mb-1">Selecciona un día</label>
 
                             <!-- Calendario visual -->
-                            <div id="calendar" class="bg-white rounded shadow p-4"></div>
+                            <div id="calendar" class="bg-white rounded-2xl shadow-sm p-4 border border-pink-100"></div>
 
                             <!-- Texto informativo con el día seleccionado -->
                             <p id="fecha_seleccionada_texto" class="mt-2 text-sm text-gray-600">
@@ -58,8 +65,8 @@
                     </div>
 
                     <div>
-                        <label class="block font-medium mb-1">Hora disponible</label>
-                        <select name="hora_inicio" id="hora_inicio" class="w-full border rounded p-2" required disabled>
+                        <label class="block font-medium text-gray-700 mb-1">Hora disponible</label>
+                        <select name="hora_inicio" id="hora_inicio" class="w-full border border-pink-200 rounded-lg p-2.5 focus:border-pink-500 focus:ring-pink-500" required disabled>
                             <option value="">Primero selecciona servicio y fecha</option>
                         </select>
                         @error('hora_inicio')
@@ -68,11 +75,11 @@
                     </div>
 
                     <div>
-                        <label class="block font-medium mb-1">Observaciones</label>
+                        <label class="block font-medium text-gray-700 mb-1">Observaciones</label>
                         <textarea
                             name="mensaje_cliente"
                             rows="4"
-                            class="w-full border rounded p-2"
+                            class="w-full border border-pink-200 rounded-lg p-2.5 focus:border-pink-500 focus:ring-pink-500"
                         >{{ old('mensaje_cliente') }}</textarea>
                         <p id="aviso_maquillaje" class="text-sm text-yellow-600 mt-1 hidden">
                             ⚠️ Las observaciones son obligatorias para servicios de maquillaje.
@@ -82,23 +89,23 @@
                         @enderror
                     </div>
 
-                    <div class="flex gap-2 pt-4">
+                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
                         <button
                             type="submit"
-                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                            class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500"
                         >
                             Reservar cita
                         </button>
 
                         <a
                             href="{{ route('cliente.citas.index') }}"
-                            class="px-4 py-2 border rounded"
+                            class="px-4 py-2 border border-pink-600 text-pink-700 rounded-lg hover:bg-pink-50 focus:outline-none focus:ring-2 focus:ring-pink-500"
                         >
                             Ver mis citas
                         </a>
                         <a
                             href="{{ route('cliente.dashboard') }}"
-                            class="px-4 py-2 border rounded"
+                            class="px-4 py-2 border border-pink-600 text-pink-700 rounded-lg hover:bg-pink-50 focus:outline-none focus:ring-2 focus:ring-pink-500"
                         >
                             Volver a la pantalla principal
                         </a>
@@ -153,7 +160,18 @@
             }
         }
 
-        servicioSelect.addEventListener('change', cargarHorasDisponibles);
+        servicioSelect.addEventListener('change', function () {
+            fechaInput.value = '';
+            document.getElementById('fecha_seleccionada_texto').textContent = 'No has seleccionado ningún día.';
+
+            horaSelect.innerHTML = '<option value="">Primero selecciona servicio y fecha</option>';
+            horaSelect.disabled = true;
+
+            if (window.calendarCliente) {
+                window.calendarCliente.refetchEvents();
+            }
+        });
+
         fechaInput.addEventListener('change', cargarHorasDisponibles);
     </script>
 
@@ -176,20 +194,54 @@
         const fechaTexto = document.getElementById('fecha_seleccionada_texto');
 
         // Creamos el calendario
-        const calendar = new FullCalendar.Calendar(calendarEl, {
+        window.calendarCliente = new FullCalendar.Calendar(calendarEl, {
+
+            titleFormat: { month: 'long' },
 
             initialView: 'dayGridMonth',
             locale: 'es',
 
             firstDay: 1,
 
+            buttonText: {
+                today: 'Hoy'
+            },
+
             //Bloqueamos días anteriores a hoy
             validRange: {
                 start: new Date().toISOString().split('T')[0]
             },
 
+            events: function(fetchInfo, successCallback, failureCallback) {
+                const servicioId = document.getElementById('servicio_id').value;
+
+                if (!servicioId) {
+                    successCallback([]);
+                    return;
+                }
+
+                const url = new URL("{{ route('cliente.citas.fechas-disponibles') }}", window.location.origin);
+                url.searchParams.append('servicio_id', servicioId);
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => successCallback(data))
+                    .catch(error => failureCallback(error));
+            },
+
+            datesSet: function(){
+                personalizarTituloCalendarioCliente();
+            },
+
             // Cuando haces click en un día
             dateClick: function(info) {
+
+                const eventosDisponibles = window.calendarCliente.getEvents().map(event => event.startStr);
+
+                if (!eventosDisponibles.includes(info.dateStr)) {
+                    fechaTexto.textContent = 'Ese día no tiene disponibilidad para el servicio seleccionado.';
+                    return;
+                }
 
                 // Guardamos la fecha seleccionada
                 fechaInput.value = info.dateStr;
@@ -199,10 +251,10 @@
 
                 // Resaltamos el día seleccionado
                 document.querySelectorAll('.fc-daygrid-day').forEach(el => {
-                    el.classList.remove('bg-blue-100', 'ring', 'ring-blue-400');
+                    el.classList.remove('bg-pink-100', 'ring', 'ring-pink-400');
                 });
 
-                info.dayEl.classList.add('bg-blue-100', 'ring', 'ring-blue-400');
+                info.dayEl.classList.add('bg-pink-100', 'ring', 'ring-pink-400');
 
                 //Mostramos la fecha seleccionada
                 const fechaBonita = new Date(info.dateStr).toLocaleDateString('es-ES', {
@@ -218,7 +270,76 @@
         });
 
         //Pintamos el calendario
-        calendar.render();
+        window.calendarCliente.render();
+
+        function personalizarTituloCalendarioCliente() {
+            const titulo = document.querySelector('#calendar .fc-toolbar-title');
+            if (titulo) {
+                titulo.textContent = titulo.textContent.toUpperCase().split(' DE ')[0];
+            }
+        }
+
+personalizarTituloCalendarioCliente();
     });
     </script>
+
+    <style>
+    .fc {
+        font-family: inherit;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .fc .fc-button {
+        background-color: #db2777 !important;
+        border-color: #db2777 !important;
+        border-radius: 0.5rem !important;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    .fc .fc-button:hover {
+        background-color: #be185d !important;
+        border-color: #be185d !important;
+    }
+
+    .fc .fc-button:disabled {
+        opacity: 0.7;
+    }
+
+    .fc .fc-scrollgrid,
+    .fc .fc-theme-standard td,
+    .fc .fc-theme-standard th {
+        border-color: #f3d4e4;
+    }
+
+    .fc .fc-col-header-cell {
+        background-color: #fdf2f8;
+    }
+
+    .fc .fc-daygrid-day.fc-day-today {
+        background-color: #fce7f3 !important;
+    }
+
+    .fc .fc-toolbar {
+        gap: 1rem;
+    }
+
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .fc .fc-button-group {
+        gap: 0.35rem;
+    }
+
+    .fc .fc-button-group > .fc-button {
+        border-radius: 0.5rem !important;
+    }
+</style>
 </x-app-layout>
