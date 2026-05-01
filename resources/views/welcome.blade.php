@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     <title>Tamara Hoyas Beauty Studio</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -13,21 +14,29 @@
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between py-4">
-                <div>
-                    <h1 class="text-xl md:text-2xl font-bold text-pink-700">
-                        Tamara Hoyas Beauty Studio
-                    </h1>
-                    <p class="text-sm text-gray-500">Micropigmentación y maquillaje profesional</p>
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('images/logo/logo transparente.png') }}"
+                        alt="Tamara Hoyas Beauty Studio"
+                        class="h-14 w-auto object-contain">
+
+                    <div>
+                        <h1 class="text-2xl font-bold text-pink-700">
+                            Tamara Hoyas Beauty Studio
+                        </h1>
+                        <p class="text-sm text-gray-600">
+                            Micropigmentación y maquillaje profesional
+                        </p>
+                    </div>
                 </div>
 
-                <nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+                <nav class="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium">
                     <a href="#inicio" class="hover:text-pink-700">Inicio</a>
                     <a href="{{ route('servicios.index') }}" class="hover:text-pink-700">Servicios</a>
                     <a href="#como-funciona" class="hover:text-pink-700">Cómo funciona</a>
                     <a href="#contacto" class="hover:text-pink-700">Contacto</a>
                 </nav>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-3 ml-4 lg:ml-6">
                     @auth
                         @if(auth()->user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}"
@@ -102,7 +111,6 @@
                         <li>✔ Elegir fecha y hora disponible</li>
                         <li>✔ Pagar el 20% de anticipo para confirmar</li>
                         <li>✔ Consultar tus citas y su estado</li>
-                        <li>✔ Gestión completa desde el panel de administración</li>
                     </ul>
                 </div>
             </div>
@@ -231,9 +239,9 @@
                     <h3 class="text-3xl font-bold mb-6 text-gray-900">Contacto</h3>
                     <div class="space-y-3 text-gray-600">
                         <p><strong>Centro:</strong> Tamara Hoyas Beauty Studio</p>
-                        <p><strong>Teléfono:</strong> 600 000 000</p>
-                        <p><strong>Email:</strong> info@tamarahoyasbeauty.com</p>
-                        <p><strong>Horario:</strong> Lunes a Viernes</p>
+                        <p><strong>Teléfono:</strong> 639 432 404</p>
+                        <p><strong>Email:</strong> tamarahoyas.micropigmentacion@gmail.com</p>
+                        <p><strong>Horario:</strong> Lunes a Viernes de 10:00 a 14:00 y de 16:00 a 20:00 </p>
                     </div>
                 </div>
 

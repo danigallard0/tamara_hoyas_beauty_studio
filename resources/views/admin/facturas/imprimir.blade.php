@@ -20,6 +20,14 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 30px;
+            border-bottom: 2px solid #f9a8d4;
+            padding-bottom: 15px;
+        }
+
+        .logo-factura {
+            height: 70px;
+            width: auto;
+            margin-bottom: 8px;
         }
 
         .bloque {
@@ -28,6 +36,11 @@
 
         h1, h2, h3 {
             margin-bottom: 10px;
+        }
+
+        h3 {
+            color: #be185d;
+            font-size: 16px;
         }
 
         p {
@@ -40,10 +53,15 @@
             margin-top: 10px;
         }
 
-        table th, table td {
-            border: 1px solid #d1d5db;
-            padding: 10px;
+        table th {
+            background-color: #fce7f3;
+            color: #9d174d;
             text-align: left;
+        }
+
+        table th, table td {
+            border: 1px solid #e5e7eb;
+            padding: 10px;
         }
 
         .totales {
@@ -57,6 +75,12 @@
             padding: 10px;
         }
 
+        .totales tr:last-child td {
+            font-weight: bold;
+            font-size: 16px;
+            background-color: #fce7f3;
+        }
+
         .acciones {
             margin-bottom: 20px;
         }
@@ -64,11 +88,12 @@
         .btn {
             display: inline-block;
             padding: 10px 16px;
-            border: 1px solid #d1d5db;
+            border: none;
             border-radius: 6px;
             text-decoration: none;
-            color: #111827;
+            color: white;
             margin-right: 10px;
+            background-color: #b3185d;
         }
 
         @media print {
@@ -90,9 +115,24 @@
         </div>
 
         <div class="cabecera">
-            <div>
-                <h1>Tamara Hoyas Beauty Studio</h1>
-                <p>Factura</p>
+            <div style="display:flex; gap:15px; align-items:flex-start;">
+    
+                <img src="{{ asset('images/logo/logo transparente.png') }}"
+                    alt="{{ config('app.empresa.nombre') }}"
+                    class="logo-factura">
+
+                <div>
+                    <p style="margin:0; font-weight:bold; font-size:16px;">
+                        {{ config('app.empresa.nombre') }}
+                    </p>
+                    <p style="margin:0;">Factura</p>
+                    <p style="margin:0;">{{ config('app.empresa.direccion') }}</p>
+                    <p style="margin:0;">CIF: {{ config('app.empresa.cif') }}</p>
+                    <p style="margin:0;">
+                        {{ config('app.empresa.email') }} · {{ config('app.empresa.telefono') }}
+                    </p>
+                </div>
+
             </div>
 
             <div>

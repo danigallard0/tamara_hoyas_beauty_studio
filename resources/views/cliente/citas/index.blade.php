@@ -4,10 +4,10 @@
             Mis citas
         </h2>
     </x-slot>
-    <div class="mb-4">
+    <div class="px-6 pt-6 mb-4">
         <a href="{{ route('cliente.dashboard') }}"
-          class="inline-block px-4 py-2 border rounded hover:bg-gray-50">
-          ← Volver al panel cliente
+            class="inline-flex items-center px-4 py-2 border border-pink-600 text-pink-700 rounded-lg hover:bg-pink-50 focus:outline-none focus:ring-2 focus:ring-pink-500">
+            ← Volver al panel cliente
         </a>
     </div>
 
@@ -30,9 +30,23 @@
                         </p>
                         <p>
                             <strong>Estado:</strong>
-                            <span class="{{ $cita->estado === 'cancelada' ? 'text-red-600' : 'text-green-600' }}">
-                                {{ ucfirst($cita->estado) }}
-                            </span>
+                            @if($cita->estado === 'confirmada')
+                                <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
+                                    Confirmada
+                                </span>
+                            @elseif($cita->estado === 'pendiente')
+                                <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Pendiente de pago
+                                </span>
+                            @elseif($cita->estado === 'cancelada')
+                                <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800">
+                                    Cancelada
+                                </span>
+                            @else
+                                <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    {{ ucfirst($cita->estado) }}
+                                </span>
+                            @endif
                         </p>
                     </div>
 

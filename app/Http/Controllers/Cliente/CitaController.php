@@ -230,9 +230,15 @@ class CitaController extends Controller
     //Muestra la pantalla de pago simulado del 20% para confirmar la cita.
     public function pago(Cita $cita)
     {
-        //Seguridad: solo el duelo de la cita puede pagarla
+        //Seguridad: solo el dueño de la cita puede pagarla
         if ($cita->user_id !== auth()->id()) {
             abort(403);
+        }
+
+        if ($cita->estado === 'confirmada') {
+            return redirect()
+                ->route('cliente.citas.index')
+                ->with('error', 'Esta cita ya está confirmada.'); 
         }
 
         //Cargamos la factura y servicios por comodidad
@@ -273,6 +279,17 @@ class CitaController extends Controller
         //Calculamos el anticipo del 20%
         $anticipo = round($cita->factura->base_imponible * 0.20, 2);
 
+        $anticipoYaPagado = $cita->factura->pagos()
+            ->where('estado', 'pagado')
+            ->where('referencia', 'like', 'SIM-%-' . $cita->id)
+            ->exists();
+
+        if ($anticipoYaPagado) {
+            return redirect()
+                ->route('cliente.citas.index')
+                ->with('error', 'Esta reserva ya tiene el anticipo pagado.');
+        }
+
         //Registramos el pago simulado
         Pago::create([
             'factura_id' => $cita->factura->id,
@@ -280,7 +297,7 @@ class CitaController extends Controller
             'importe' => $anticipo,
             'estado' => 'pagado',
             'fecha_pago' => now(),
-            'refefrencia' => 'SIM-' . now()->format('YmdHis') . '-' . $cita->id,
+            'referencia' => 'SIM-' . now()->format('YmdHis') . '-' . $cita->id,
         ]);
 
         //Marcamos la cita como confirmada tras el pago del anticipo

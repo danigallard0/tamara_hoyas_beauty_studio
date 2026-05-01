@@ -6,12 +6,9 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                        {{-- Futuro logo --}}
-                        {{-- <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8 w-auto"> --}}
-
-                        <span class="text-lg font-semibold text-pink-600">
-                            Tamara Hoyas Beauty Studio
-                        </span>
+                        <img src="{{ asset('images/logo/logo transparente.png') }}"
+                            alt="Tamara Hoyas Beauty Studio"
+                            class="h-12 w-auto object-contain drop-shadow-sm">
                     </a>
                 </div>
 

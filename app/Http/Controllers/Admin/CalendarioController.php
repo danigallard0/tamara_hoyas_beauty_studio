@@ -38,7 +38,16 @@ class CalendarioController extends Controller
             $nombreCliente = $cita->user?->name ?? 'Cliente';
             $servicios = $cita->servicios->pluck('nombre')->join(', ');
             $estadoCobro = $cita->factura ? $cita->factura->estado_cobro : 'pendiente';
-             $titulo = $nombreCliente . ' - ' . $servicios . ' [' . strtoupper($estadoCobro) . ']';
+            $titulo = $nombreCliente . ' - ' . $servicios . ' (' . ucfirst($cita->estado) . ')';
+
+            $estado = strtolower($cita->estado);
+
+                $color = match ($estado) {
+                    'confirmada' => '#10b981', // verde
+                    'pendiente' => '#f59e0b',  // amarillo/naranja suave
+                    'cancelada' => '#ef4444',  // rojo
+                    default => '#9ca3af',      // gris
+                };
 
             return [
                 'id' => $cita->id,
@@ -55,12 +64,11 @@ class CalendarioController extends Controller
                  'allday' => false,
 
                  //Color según estado
-                 'color' => match ($estadoCobro) {
-                    'pendiente' => '#f59e0b',
-                    'parcial' => '#f97316',
-                    'pagado' => '#10b981',
-                    default => '#3b82f6',
-                 },
+                
+
+                'backgroundColor' => $color,
+                'borderColor' => $color,
+                'textColor' => '#ffffff',
 
                  //Información extra por si queremos mostrar detalles
                  'extendedProps' => [
