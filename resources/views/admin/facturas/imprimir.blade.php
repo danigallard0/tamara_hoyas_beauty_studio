@@ -117,7 +117,7 @@
         <div class="cabecera">
             <div style="display:flex; gap:15px; align-items:flex-start;">
     
-                <img src="{{ asset('images/logo/logo transparente.png') }}"
+                <img src="{{ asset('public/images/logo/logotransparente.PNG') }}"
                     alt="{{ config('app.empresa.nombre') }}"
                     class="logo-factura">
 

@@ -9,7 +9,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="bg-white rounded-2xl shadow-md p-6 md:p-8">
                 <div class="flex items-center gap-3 mb-6">
-                    <img src="{{ asset('images/logo/logo transparente.png') }}"
+                    <img src="{{ asset('public/images/logo/logotransparente.PNG') }}"
                         alt="Tamara Hoyas Beauty Studio"
                         class="h-12 w-auto object-contain">
 
