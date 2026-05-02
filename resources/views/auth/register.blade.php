@@ -16,7 +16,7 @@
                 <!-- Nombre -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Nombre
+                        Nombre completo
                     </label>
                     <input type="text" name="name" required autofocus
                         class="w-full rounded-lg border-gray-300 focus:border-pink-500 focus:ring-pink-500">
