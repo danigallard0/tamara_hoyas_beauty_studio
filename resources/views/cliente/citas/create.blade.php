@@ -222,6 +222,8 @@
 
                 const url = new URL("{{ route('cliente.citas.fechas-disponibles') }}", window.location.origin);
                 url.searchParams.append('servicio_id', servicioId);
+                url.searchParams.append('start', fetchInfo.startStr);
+                url.searchParams.append('end', fetchInfo.endStr);
 
                 fetch(url)
                     .then(response => response.json())

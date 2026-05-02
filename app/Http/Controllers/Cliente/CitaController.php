@@ -311,70 +311,81 @@ class CitaController extends Controller
     }
 
     public function fechasDisponibles(Request $request)
-    {
-        $data = $request->validate([
-            'servicio_id' => ['required', 'exists:servicios,id'],
-        ]);
+{
+    $data = $request->validate([
+        'servicio_id' => ['required', 'exists:servicios,id'],
+        'start' => ['nullable', 'date'],
+        'end' => ['nullable', 'date'],
+    ]);
 
-        $servicio = Servicio::findOrFail($data['servicio_id']);
-        $fechasDisponibles = [];
+    $servicio = Servicio::findOrFail($data['servicio_id']);
+    $fechasDisponibles = [];
 
-        // Revisamos los próximos 30 días
-        for ($i = 0; $i < 30; $i++) {
-            $fecha = now()->addDays($i)->startOfDay();
-            $diaSemana = $fecha->dayOfWeekIso; // 1=Lunes ... 7=Domingo
+    $inicio = isset($data['start'])
+        ? Carbon::parse($data['start'])->startOfDay()
+        : now()->startOfDay();
 
-            $horarios = Horario::where('activo', true)
-                ->where('dia_semana', $diaSemana)
-                ->orderBy('hora_inicio')
-                ->get();
+    $fin = isset($data['end'])
+        ? Carbon::parse($data['end'])->startOfDay()
+        : now()->addDays(60)->startOfDay();
 
-            // Si no hay horario ese día, lo saltamos
-            if ($horarios->isEmpty()) {
-                continue;
-            }
+    for ($fecha = $inicio->copy(); $fecha->lt($fin); $fecha->addDay()) {
+        if ($fecha->lt(now()->startOfDay())) {
+            continue;
+        }
 
-            $citasExistentes = Cita::whereDate('fecha_cita', $fecha->format('Y-m-d'))
-                ->where('estado', '!=', 'cancelada')
-                ->get();
+        $diaSemana = $fecha->dayOfWeekIso;
 
-            $hayHueco = false;
+        $horarios = Horario::where('activo', true)
+            ->where('dia_semana', $diaSemana)
+            ->orderBy('hora_inicio')
+            ->get();
 
-            foreach ($horarios as $horario) {
-                $inicioBloque = Carbon::createFromFormat('H:i:s', $horario->hora_inicio);
-                $finBloque = Carbon::createFromFormat('H:i:s', $horario->hora_fin);
+        if ($horarios->isEmpty()) {
+            continue;
+        }
 
-                $slotInicio = $inicioBloque->copy();
+        $citasExistentes = Cita::whereDate('fecha_cita', $fecha->format('Y-m-d'))
+            ->where('estado', '!=', 'cancelada')
+            ->get();
 
-                while ($slotInicio->copy()->addMinutes($servicio->duracion_min)->lte($finBloque)) {
-                    $slotFin = $slotInicio->copy()->addMinutes($servicio->duracion_min);
+        $hayHueco = false;
 
-                    $solapa = $citasExistentes->contains(function ($cita) use ($slotInicio, $slotFin) {
-                        $citaInicio = Carbon::createFromFormat('H:i:s', $cita->hora_inicio);
-                        $citaFin = Carbon::createFromFormat('H:i:s', $cita->hora_fin);
+        foreach ($horarios as $horario) {
+            $inicioBloque = Carbon::createFromFormat('H:i:s', $horario->hora_inicio);
+            $finBloque = Carbon::createFromFormat('H:i:s', $horario->hora_fin);
 
-                        return $citaInicio < $slotFin && $citaFin > $slotInicio;
-                    });
+            $slotInicio = $inicioBloque->copy();
 
-                    if (! $solapa) {
-                        $hayHueco = true;
-                        break 2; // salimos del while y del foreach
-                    }
+            while ($slotInicio->copy()->addMinutes($servicio->duracion_min)->lte($finBloque)) {
+                $slotFin = $slotInicio->copy()->addMinutes($servicio->duracion_min);
 
-                    $slotInicio->addMinutes(30);
+                $solapa = $citasExistentes->contains(function ($cita) use ($slotInicio, $slotFin) {
+                    $citaInicio = Carbon::createFromFormat('H:i:s', $cita->hora_inicio);
+                    $citaFin = Carbon::createFromFormat('H:i:s', $cita->hora_fin);
+
+                    return $citaInicio < $slotFin && $citaFin > $slotInicio;
+                });
+
+                if (! $solapa) {
+                    $hayHueco = true;
+                    break 2;
                 }
-            }
 
-            if ($hayHueco) {
-                $fechasDisponibles[] = [
-                    'start' => $fecha->format('Y-m-d'),
-                    'display' => 'background',
-                    'color' => '#fce7f3',
-                ];
+                $slotInicio->addMinutes(30);
             }
         }
 
-        return response()->json($fechasDisponibles);
+        if ($hayHueco) {
+            $fechasDisponibles[] = [
+                'start' => $fecha->format('Y-m-d'),
+                'display' => 'background',
+                'color' => '#fce7f3',
+            ];
+        }
     }
+
+    return response()->json($fechasDisponibles);
+}
     
 }
