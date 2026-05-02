@@ -63,7 +63,7 @@
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button type="submit"
-                            onclick="return confirm('¿Deseas simular el pago del anticipo para confirmar la reserva?')"
+                            onclick="return confirm('¿Deseas realizar el pago del anticipo para confirmar la reserva?')"
                             class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500">
                         Pagar ahora
                     </button>
