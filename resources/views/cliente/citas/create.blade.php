@@ -196,7 +196,7 @@
         // Creamos el calendario
         window.calendarCliente = new FullCalendar.Calendar(calendarEl, {
 
-            titleFormat: { month: 'long' },
+            titleFormat: { month: 'long', year: 'numeric' },
 
             initialView: 'dayGridMonth',
             locale: 'es',
@@ -225,7 +225,15 @@
 
                 fetch(url)
                     .then(response => response.json())
-                    .then(data => successCallback(data))
+                    .then(data => {
+                        const eventos = data.map(evento => ({
+                            ...evento,
+                            display: 'background',
+                            color: '#fce7f3'
+                        }));
+
+                        successCallback(eventos);
+                    })
                     .catch(error => failureCallback(error));
             },
 
@@ -274,8 +282,15 @@
 
         function personalizarTituloCalendarioCliente() {
             const titulo = document.querySelector('#calendar .fc-toolbar-title');
-            if (titulo) {
-                titulo.textContent = titulo.textContent.toUpperCase().split(' DE ')[0];
+
+            if (titulo && window.calendarCliente) {
+                const fechaActual = window.calendarCliente.getDate();
+
+                const mes = fechaActual.toLocaleDateString('es-ES', {
+                    month: 'long'
+                });
+
+                titulo.textContent = mes.toUpperCase();
             }
         }
 
