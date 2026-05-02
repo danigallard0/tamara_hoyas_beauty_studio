@@ -14,7 +14,7 @@
             <a href="{{ url('/') }}" class="flex items-center gap-2">
                 <img src="{{ asset('logo.png') }}"
                     alt="Tamara Hoyas Beauty Studio"
-                    class="h-8 sm:h-10 w-auto object-contain">
+                    class="h-14 sm:h-16 w-auto object-contain">
             </a>
 
             <a href="{{ url('/') }}"
