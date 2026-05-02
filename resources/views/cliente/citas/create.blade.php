@@ -40,7 +40,6 @@
                     </div>
 
                     <div>
-                        <label class="block font-medium text-gray-700 mb-1">Fecha</label>
                         <div>
                             <label class="block font-medium text-gray-700 mb-1">Selecciona un día</label>
 
