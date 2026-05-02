@@ -65,6 +65,8 @@
             return;
           }
 
+          const esMovil = window.innerWidth < 768; 
+
             // Creamos el calendario del admin
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: esMovil ? 'dayGridMonth' : 'timeGridWeek',
