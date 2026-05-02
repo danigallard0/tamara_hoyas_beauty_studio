@@ -10,9 +10,11 @@
 
     <header class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <a href="{{ url('/') }}" class="text-2xl font-bold text-pink-700">
-                Tamara Hoyas Beauty Studio
-            </a>
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                        <img src="{{ asset('logo.png') }}"
+                            alt="Tamara Hoyas Beauty Studio"
+                            class="h-12 w-auto object-contain drop-shadow-sm">
+                    </a>
 
             <div class="flex gap-2">
                 <a href="{{ route('servicios.index') }}"
@@ -39,7 +41,7 @@
         <div class="mb-10">
             <h1 class="text-4xl font-bold text-gray-900 mb-4">Micropigmentación de ojos</h1>
             <p class="text-gray-600 max-w-3xl">
-                Tratamiento destinado a degfinir la línea de ojos y resaltar la mirada con un resultado elegante, preciso y duradero.
+                Tratamiento destinado a definir la línea de ojos y resaltar la mirada con un resultado elegante, preciso y duradero.
             </p>
         </div>
 
