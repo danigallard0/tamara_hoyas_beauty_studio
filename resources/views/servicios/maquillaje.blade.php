@@ -10,11 +10,9 @@
 
     <header class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-           <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                        <img src="{{ asset('logo.png') }}"
-                            alt="Tamara Hoyas Beauty Studio"
-                            class="h-12 w-auto object-contain drop-shadow-sm">
-                    </a>
+           <a href="{{ url('/') }}" class="text-2xl font-bold text-pink-700">
+                Tamara Hoyas Beauty Studio
+            </a>
 
             <div class="flex gap-2">
                 <a href="{{ route('servicios.index') }}"
