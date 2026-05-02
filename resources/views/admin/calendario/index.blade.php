@@ -67,7 +67,7 @@
 
             // Creamos el calendario del admin
             const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek',
+                initialView: esMovil ? 'dayGridMonth' : 'timeGridWeek',
                 locale: 'es',
                 firstDay: 1,
 
@@ -100,7 +100,7 @@
                 headerToolbar: {
                   left: 'prev,next today',
                   center: 'title',
-                  right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                  right: esMovil ? '' : 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
 
                 //Texto del botoón "today"
