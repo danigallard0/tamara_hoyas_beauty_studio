@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                        <img src="{{ asset('images/logo/logo transparente.png') }}"
+                        <img src="{{ asset('logo.png') }}"
                             alt="Tamara Hoyas Beauty Studio"
                             class="h-12 w-auto object-contain drop-shadow-sm">
                     </a>
