@@ -13,12 +13,6 @@
   <div class="p-6">
     <a href="{{ route('admin.horarios.create') }}" class="mb-4 inline-block px-4 py-2 bg-blue-600 text-white rounded">Nuevo horario</a>
 
-    @if(session('success'))
-      <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
-        {{ session('success') }}
-      </div>
-    @endif
-
     <table class="w-full border">
       <thead class="bg-gray-100">
         <tr>
