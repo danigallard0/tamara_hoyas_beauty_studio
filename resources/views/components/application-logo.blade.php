@@ -1,3 +1,3 @@
-<img src="{{ asset('images/logo/logotransparente.png') }}" 
+<img src="{{ asset('logo.png') }}" 
      alt="Logo" 
      class="h-10 w-auto">
