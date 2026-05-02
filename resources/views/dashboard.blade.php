@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
-            <img src="{{ asset('images/logo/logotransparente.png') }}"
+            <img src="{{ asset('logo.png') }}"
                  alt="Logo"
                 class="h-10 w-auto object-contain">
 

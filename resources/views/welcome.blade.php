@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-app.png') }}">
     <title>Tamara Hoyas Beauty Studio</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -15,7 +15,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between py-4">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('public/images/logo/logotransparente.PNG') }}"
+                    <img src="{{ asset('logo.png') }}"
                         alt="Tamara Hoyas Beauty Studio"
                         class="h-14 w-auto object-contain">
 
