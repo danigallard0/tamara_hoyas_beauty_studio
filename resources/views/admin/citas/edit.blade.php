@@ -107,7 +107,7 @@
             @else
                 <div class="mt-4">
                     <a href="{{ route('admin.facturas.show', $cita->factura) }}"
-                       class="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-pink-700">
+                       class="inline-block px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700">
                         Ver factura 
                     </a>
                 </div>
