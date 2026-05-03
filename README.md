@@ -75,6 +75,10 @@ cd tamara_hoyas_beauty_studio
 
 - php artisan serve
 
+-------Usuario admin:-------
+-------admin@admin.com------
+-------password: 123456789------
+
 👨‍💻 Daniel Gallardo
 
 Proyecto desarrollado como trabajo final del Grado Superior en Desarrollo de Aplicaciones Multiplataforma (DAM).
