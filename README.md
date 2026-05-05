@@ -77,7 +77,7 @@ cd tamara_hoyas_beauty_studio
 
 -------Usuario admin:-------
 -------admin@admin.com------
--------password: 123456789------
+-------password: Admin12345------
 
 👨‍💻 Daniel Gallardo
 
