@@ -14,11 +14,11 @@
                     Datos fiscales del centro
                 </h3>
 
-                <p><strong>Nombre:</strong> {{ config('app.empresa.nombre') }}</p>
-                <p><strong>Dirección:</strong> {{ config('app.empresa.direccion') }}</p>
-                <p><strong>CIF/NIF:</strong> {{ config('app.empresa.cif') }}</p>
-                <p><strong>Email:</strong> {{ config('app.empresa.email') }}</p>
-                <p><strong>Teléfono:</strong> {{ config('app.empresa.telefono') }}</p>
+                <p><strong>Nombre:</strong> Tamara Hoyas Beauty Studio</p>
+                <p><strong>Dirección:</strong> C/ Ejemplo 10, Mérida</p>
+                <p><strong>CIF/NIF:</strong> 12345678A</p>
+                <p><strong>Email:</strong> tamarahoyas.micropigmentacion@gmail.com</p>
+                <p><strong>Teléfono:</strong> 639432404</p>
             </div>
             <div class="mb-6">
                 <h3 class="text-xl font-semibold text-pink-700 mb-2">Datos de la factura</h3>
